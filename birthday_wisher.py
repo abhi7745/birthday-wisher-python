@@ -20,7 +20,7 @@ def email_sender(receiver_email, name):
     message=EmailMessage()
     message['From'] = SENDER_EMAIL
     message['To'] = receiver_email
-    message['Subject'] = 'Birthday Wish'
+    message['Subject'] = 'Happy Birthday!'
     # message.set_content(body)
 
 
@@ -157,10 +157,9 @@ def email_sender(receiver_email, name):
     """
 
     message.add_alternative(html, subtype="html")
-
     context=ssl.create_default_context() # it securing connection
 
-    print('Sending Email')
+    print('Sending Email to Users')
 
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login(SENDER_EMAIL, PASSWORD)
@@ -169,7 +168,26 @@ def email_sender(receiver_email, name):
     print('Birthday wish sended to ', name, receiver_email)
 
 
+def admin_email_sender(PersonName):
+    # message setting area
+    message=EmailMessage()
+    message['From'] = SENDER_EMAIL
+    message['To'] = SENDER_EMAIL
+    message['Subject'] = "Today is " + PersonName + "'s Birthday"
+    # message.set_content(body)
 
+    html = f"""
+            <h1>Today is {PersonName}'s Birthday, The email wish sended successfully</h1>
+    """
+
+    message.add_alternative(html, subtype="html")
+    context=ssl.create_default_context() # it securing connection
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        server.login(SENDER_EMAIL, PASSWORD)
+        server.sendmail(SENDER_EMAIL, SENDER_EMAIL, message.as_string())
+
+    print('Email sended to admin')
 
 birthday_true_count = 0
 birthday_false_count = 0
@@ -185,7 +203,8 @@ for key, value in RECEIVER_EMAIL_DICT.items():
         # print('date true')
         email_list.append(value[0])
         name.append(value[2])
-        email_sender(value[0], value[2])
+        email_sender(value[0], value[2]) # function to send email when any birthday found
+        admin_email_sender(value[2]) # when any birthday found then send a confirmation mail to admin
     else:
         birthday_false_count += 1
         # print('date false', curr_date, '!=', date_object.date())
